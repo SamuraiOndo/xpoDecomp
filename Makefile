@@ -239,7 +239,7 @@ else
 $(EXE): $(BUILD_DIR)/$(TARGET).elf
 	@$(PRINT)$(GREEN)Creating EXE: $(ENDGREEN)$(BLUE)$@$(ENDBLUE)$(ENDLINE)
 	$(V)$(OBJCOPY) $< $@ -O binary
-	$(V)$(OBJCOPY) -O binary --gap-fill 0x00 --pad-to 0x7f000 $< $@
+	$(V)$(OBJCOPY) -O binary $< $@
 ifeq ($(COMPARE),1)
 	@$(DIFF) $(BASEEXE) $(EXE) && printf "OK\n" || (echo 'The build succeeded, but did not match the base EXE. This is expected if you are making changes to the game. To skip this check, use "make COMPARE=0".' && false)
 endif

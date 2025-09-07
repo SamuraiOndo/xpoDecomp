@@ -8,11 +8,6 @@ options:
   platform: psx
   compiler: PSYQ
 
-  asm_path: asm
-  src_path: src
-  build_path: build
-  # create_asm_dependencies: True
-
   ld_script_path: psx.exe.ld
   ld_dependencies: True
 
@@ -20,37 +15,25 @@ options:
   gp_value: 0x800963A8
 
   o_as_suffix: True
-  use_legacy_include_asm: False
 
-  section_order: [".rodata", ".text", ".data", ".sdata", ".bss"]
-  # auto_link_sections: [".data", ".rodata", ".bss"]
+  section_order: [".rodata", ".text", ".data", ".sdata", ".sbss", ".bss"]
 
   symbol_addrs_path:
     - symbol_addrs.txt
   reloc_addrs_path:
     - reloc_addrs.txt
 
-  undefined_funcs_auto_path: undefined_funcs_auto.txt
-  undefined_syms_auto_path: undefined_syms_auto.txt
-  
-  extensions_path: tools/splat_ext
   subalign: 2
-  
+
   ld_bss_is_noload: True
-
-  string_encoding: ASCII
-  data_string_encoding: ASCII
-  rodata_string_guesser_level: 2
-  data_string_guesser_level: 2
-
 segments:
   - name: header
     type: header
     start: 0x0
 
   - name: main
-    align: 2
     type: code
+    align: 2
     start: 0x800
     vram: 0x80018000
     bss_size: 0x33C9C
@@ -59,8 +42,7 @@ segments:
       - [0x20E0, asm, text]
       - [0x5B5EC, data, data]
       - [0x7EBA8, sdata, sdata]
-      - [0x7EE8C]
-      - { vram: 0x8009668C, type: sbss, name: sbss }
+      - { vram: 0x80096690, type: sbss, name: sbss }
       - { vram: 0x80096B80, type: bss, name: bss }
-  - [0x7EE8C]
+  - { start: 0x7EE90, vram: 0, type: data, name: padding}
   - [0x7F000]

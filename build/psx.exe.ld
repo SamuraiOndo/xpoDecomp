@@ -40,7 +40,6 @@ SECTIONS
         main_DATA_SIZE = ABSOLUTE(main_DATA_END - main_DATA_START);
         main_SDATA_START = .;
         build/asm/data/sdata.sdata.o(.sdata);
-        build/asm/data/sbss.sbss.o(.sbss);
         . = ALIGN(., 2);
         main_SDATA_END = .;
         main_SDATA_SIZE = ABSOLUTE(main_SDATA_END - main_SDATA_START);
@@ -49,6 +48,11 @@ SECTIONS
     .main_bss (NOLOAD) : SUBALIGN(2)
     {
         FILL(0x00000000);
+        main_SBSS_START = .;
+        build/asm/data/sbss.sbss.o(.sbss);
+        . = ALIGN(., 2);
+        main_SBSS_END = .;
+        main_SBSS_SIZE = ABSOLUTE(main_SBSS_END - main_SBSS_START);
         main_BSS_START = .;
         build/asm/data/rdata.rodata.o(.bss);
         build/asm/text.o(.bss);
@@ -62,6 +66,19 @@ SECTIONS
     . = ALIGN(., 2);
     main_ROM_END = __romPos;
     main_VRAM_END = .;
+    padding_ROM_START = __romPos;
+    padding_VRAM = ADDR(.padding);
+    .padding 0x0 : AT(padding_ROM_START) SUBALIGN(2)
+    {
+        FILL(0x00000000);
+        padding_DATA_START = .;
+        build/asm/data/padding.data.o(.data);
+        padding_DATA_END = .;
+        padding_DATA_SIZE = ABSOLUTE(padding_DATA_END - padding_DATA_START);
+    }
+    __romPos += SIZEOF(.padding);
+    padding_ROM_END = __romPos;
+    padding_VRAM_END = .;
     /DISCARD/ :
     {
         *(*);
