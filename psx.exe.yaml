@@ -13,7 +13,7 @@ options:
   build_path: build
   # create_asm_dependencies: True
 
-  ld_script_path: build/psx.exe.ld
+  ld_script_path: psx.exe.ld
   ld_dependencies: True
 
   find_file_boundaries: False
@@ -22,7 +22,7 @@ options:
   o_as_suffix: True
   use_legacy_include_asm: False
 
-  section_order: [".rodata", ".text", ".data", ".bss"]
+  section_order: [".rodata", ".text", ".data", ".sdata", ".bss"]
   # auto_link_sections: [".data", ".rodata", ".bss"]
 
   symbol_addrs_path:
@@ -30,29 +30,37 @@ options:
   reloc_addrs_path:
     - reloc_addrs.txt
 
-  # undefined_funcs_auto_path: undefined_funcs_auto.txt
-  # undefined_syms_auto_path: undefined_syms_auto.txt
-
+  undefined_funcs_auto_path: undefined_funcs_auto.txt
+  undefined_syms_auto_path: undefined_syms_auto.txt
+  
   extensions_path: tools/splat_ext
-
   subalign: 2
+  
+  ld_bss_is_noload: True
 
   string_encoding: ASCII
   data_string_encoding: ASCII
   rodata_string_guesser_level: 2
   data_string_guesser_level: 2
+
 segments:
   - name: header
     type: header
     start: 0x0
 
   - name: main
+    align: 2
     type: code
     start: 0x800
     vram: 0x80018000
     bss_size: 0x33C9C
     subsegments:
-      - [0x800, rodata, 18E0]
-      - [0x20E0, asm, 5950C] # estimated
-      - [0x5B6AC, data, 7F000] # estimated
+      - [0x800, rodata, rdata]
+      - [0x20E0, asm, text]
+      - [0x5B5EC, data, data]
+      - [0x7EBA8, sdata, sdata]
+      - [0x7EE8C]
+      - { vram: 0x8009668C, type: sbss, name: sbss }
+      - { vram: 0x80096B80, type: bss, name: bss }
+  - [0x7EE8C]
   - [0x7F000]

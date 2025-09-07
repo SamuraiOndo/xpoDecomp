@@ -1,19 +1,25 @@
 build/psx.exe.elf: \
     build/asm/header.o \
-    build/asm/data/18E0.rodata.o \
-    build/asm/5950C.o \
-    build/asm/data/18E0.rodata.o \
-    build/asm/5950C.o \
-    build/asm/5950C.o \
-    build/asm/data/18E0.rodata.o \
-    build/asm/5950C.o \
-    build/asm/data/7F000.data.o
+    build/asm/data/rdata.rodata.o \
+    build/asm/text.o \
+    build/asm/data/rdata.rodata.o \
+    build/asm/text.o \
+    build/asm/text.o \
+    build/asm/data/rdata.rodata.o \
+    build/asm/text.o \
+    build/asm/data/data.data.o \
+    build/asm/data/sdata.sdata.o \
+    build/asm/data/sbss.sbss.o \
+    build/asm/data/bss.bss.o
 build/asm/header.o:
-build/asm/data/18E0.rodata.o:
-build/asm/5950C.o:
-build/asm/data/18E0.rodata.o:
-build/asm/5950C.o:
-build/asm/5950C.o:
-build/asm/data/18E0.rodata.o:
-build/asm/5950C.o:
-build/asm/data/7F000.data.o:
+build/asm/data/rdata.rodata.o:
+build/asm/text.o:
+build/asm/data/rdata.rodata.o:
+build/asm/text.o:
+build/asm/text.o:
+build/asm/data/rdata.rodata.o:
+build/asm/text.o:
+build/asm/data/data.data.o:
+build/asm/data/sdata.sdata.o:
+build/asm/data/sbss.sbss.o:
+build/asm/data/bss.bss.o:

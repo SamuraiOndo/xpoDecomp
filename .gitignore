@@ -1,0 +1,10 @@
+psx.exe
+psx.exe.i64
+build/*
+asm/*
+/tools/maspsx
+psx.exe.d
+PSX.EXE.i64
+psx.exe.ld
+PSX.EXE.i64
+undefined_syms_auto.txt

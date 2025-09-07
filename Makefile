@@ -51,7 +51,7 @@ LD_MAP       := $(BUILD_DIR)/$(TARGET).map
 
 PYTHON     := python3
 SPLAT_YAML := $(BASEEXE).yaml
-SPLAT      := splat split $(SPLAT_YAML)
+SPLAT      := $(PYTHON) -m splat split $(SPLAT_YAML)
 DIFF       := diff
 MASPSX     := $(PYTHON) tools/maspsx/maspsx.py --use-comm-section --aspsx-version=2.81 -G4096
 CROSS    := mips-linux-gnu-
@@ -81,7 +81,7 @@ ENDLINE := \n'
 ### Compiler Options ###
 
 ASFLAGS        := -Iinclude -march=r3000 -mtune=r3000 -no-pad-sections
-CFLAGS         := -O2 -G4096 -gcoff -quiet -fsigned-char
+CFLAGS         := -O3 -G4096 -gcoff -quiet -fsigned-char
 CPPFLAGS       := -Iinclude -Isrc -DTARGET_PSX
 LDFLAGS        := -T undefined_syms.txt -T undefined_funcs.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(LD_MAP) \
                   --no-check-sections -nostdlib
@@ -99,9 +99,7 @@ endif
 ### Sources ###
 
 ASM_SRCS := $(shell find asm/ -type f -name '*.s')
-ASM_OBJS := $(ASM_SRCS:.s=.s.o)
-ASM_OBJS := $(ASM_OBJS:%=$(BUILD_DIR)/%)
-
+ASM_OBJS := $(ASM_SRCS:asm/%.s=$(BUILD_DIR)/asm/%.o)
 # Object files
 OBJECTS := $(shell grep -E 'BUILD_PATH.+\.o' $(LD_SCRIPT) -o)
 OBJECTS := $(OBJECTS:BUILD_PATH/%=$(BUILD_DIR)/%)
@@ -112,42 +110,42 @@ DEPENDS := $(OBJECTS:=.d)
 
 ### Targets ###
 
-$(BUILD_DIR)/src/Game/CINEMA/CINEPSX.c.o: CFLAGS += -G0
+# $(BUILD_DIR)/src/Game/CINEMA/CINEPSX.c.o: CFLAGS += -G0
 
-$(BUILD_DIR)/src/Game/MCARD/MEMCARD.c.o: CFLAGS += -G0
-$(BUILD_DIR)/src/Game/MCARD/MCASSERT.c.o: CFLAGS += -G0
+# $(BUILD_DIR)/src/Game/MCARD/MEMCARD.c.o: CFLAGS += -G0
+# $(BUILD_DIR)/src/Game/MCARD/MCASSERT.c.o: CFLAGS += -G0
 
-$(BUILD_DIR)/src/Game/MENU/MENUUTIL.c.o: CFLAGS += -G0
+# $(BUILD_DIR)/src/Game/MENU/MENUUTIL.c.o: CFLAGS += -G0
 
-$(BUILD_DIR)/src/Game/G2/QUATG2.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/G2/QUATG2.c.o: CFLAGS += -funsigned-char
 
-$(BUILD_DIR)/src/Game/PLAN/ENMYPLAN.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PLAN/PLANPOOL.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PLAN/PLANAPI.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PLAN/ENMYPLAN.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PLAN/PLANPOOL.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PLAN/PLANAPI.c.o: CFLAGS += -funsigned-char
 
-$(BUILD_DIR)/src/Game/PSX/AADLIB.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PSX/AADSEQEV.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PSX/AADSFX.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PSX/AADSQCMD.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PSX/AADVOICE.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PSX/MAIN.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/PSX/SUPPORT.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/AADLIB.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/AADSEQEV.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/AADSFX.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/AADSQCMD.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/AADVOICE.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/MAIN.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/PSX/SUPPORT.c.o: CFLAGS += -funsigned-char
 
-$(BUILD_DIR)/src/Game/DRAW.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/STRMLOAD.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/INSTANCE.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/DEBUG.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/SOUND.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/MEMPACK.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/LOAD3D.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/FONT.c.o: CFLAGS += -funsigned-char
-$(BUILD_DIR)/src/Game/EVENT.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/DRAW.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/STRMLOAD.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/INSTANCE.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/DEBUG.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/SOUND.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/MEMPACK.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/LOAD3D.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/FONT.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/EVENT.c.o: CFLAGS += -funsigned-char
 
-$(BUILD_DIR)/src/Game/MONSTER/MONMSG.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/MONSTER/MONMSG.c.o: CFLAGS += -funsigned-char
 
-$(BUILD_DIR)/src/Game/MENU/MENUFACE.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/MENU/MENUFACE.c.o: CFLAGS += -funsigned-char
 
-$(BUILD_DIR)/src/Game/RAZIEL/RAZIEL.c.o: CFLAGS += -funsigned-char
+# $(BUILD_DIR)/src/Game/RAZIEL/RAZIEL.c.o: CFLAGS += -funsigned-char
 
 ifeq ($(SKIP_ASM),1)
 all: $(OBJECTS)
@@ -203,10 +201,11 @@ endif
 	$(V)$(CPP) $(CPPFLAGS) -ffreestanding -MMD -MP -MT $@ -MF $@.d $< | $(CC) $(CFLAGS) | $(MASPSX) | $(AS) $(ASFLAGS) -o $@
 
 # Compile .s files
-$(BUILD_DIR)/%.s.o: %.s
+$(BUILD_DIR)/asm/%.o: asm/%.s
 	@$(PRINT)$(GREEN)Assembling asm file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	$(V)$(AS) $(ASFLAGS) -o $@ $<
+OBJECTS += $(ASM_OBJS)
 
 # Create .o files from .bin files.
 $(BUILD_DIR)/%.bin.o: %.bin
@@ -215,6 +214,7 @@ $(BUILD_DIR)/%.bin.o: %.bin
 	$(V)$(LD) -r -b binary -o $@ $<
 
 $(BUILD_DIR)/$(LD_SCRIPT): $(LD_SCRIPT)
+	@mkdir -p $(BUILD_DIR)
 	@$(PRINT)$(GREEN)Preprocessing linker script: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	$(V)$(CPP) -P -DBUILD_PATH=$(BUILD_DIR) $< -o $@
 #Temporary hack for noload segment wrong alignment
@@ -239,7 +239,7 @@ else
 $(EXE): $(BUILD_DIR)/$(TARGET).elf
 	@$(PRINT)$(GREEN)Creating EXE: $(ENDGREEN)$(BLUE)$@$(ENDBLUE)$(ENDLINE)
 	$(V)$(OBJCOPY) $< $@ -O binary
-	$(V)$(OBJCOPY) -O binary --gap-fill 0x00 --pad-to 0x0C3000 $< $@
+	$(V)$(OBJCOPY) -O binary --gap-fill 0x00 --pad-to 0x7f000 $< $@
 ifeq ($(COMPARE),1)
 	@$(DIFF) $(BASEEXE) $(EXE) && printf "OK\n" || (echo 'The build succeeded, but did not match the base EXE. This is expected if you are making changes to the game. To skip this check, use "make COMPARE=0".' && false)
 endif
