@@ -24,7 +24,7 @@ options:
     - reloc_addrs.txt
 
   subalign: 2
-
+  extensions_path: tools/splat_ext
   ld_bss_is_noload: True
 segments:
   - name: header
@@ -39,7 +39,8 @@ segments:
     bss_size: 0x33C9C
     subsegments:
       - [0x800, rodata, rdata]
-      - [0x20E0, asm, text]
+      - [0x20E0, c, game/test]
+      - [0x20E8, asm, text]
       - [0x5B5EC, data, data]
       - [0x7EBA8, sdata, sdata]
       - { vram: 0x80096690, type: sbss, name: sbss }

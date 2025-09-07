@@ -100,6 +100,10 @@ endif
 
 ASM_SRCS := $(shell find asm/ -type f -name '*.s')
 ASM_OBJS := $(ASM_SRCS:asm/%.s=$(BUILD_DIR)/asm/%.o)
+
+C_SRCS := $(shell find src/ -name '*.c')
+C_OBJS := $(C_SRCS:%.c=$(BUILD_DIR)/%.o)
+
 # Object files
 OBJECTS := $(shell grep -E 'BUILD_PATH.+\.o' $(LD_SCRIPT) -o)
 OBJECTS := $(OBJECTS:BUILD_PATH/%=$(BUILD_DIR)/%)
@@ -192,14 +196,14 @@ expected: all
 	$(V)find $(EXPECTED_DIR)/src -name '*.s.o' -delete
 
 # Compile .c files
-$(BUILD_DIR)/%.c.o: %.c
+$(BUILD_DIR)/%.o: %.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 ifeq ($(CHECK),1)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CHECK_WARNINGS) $(CPPFLAGS) -UTARGET_PSX $<
 endif
 	$(V)$(CPP) $(CPPFLAGS) -ffreestanding -MMD -MP -MT $@ -MF $@.d $< | $(CC) $(CFLAGS) | $(MASPSX) | $(AS) $(ASFLAGS) -o $@
-
+OBJECTS += $(C_OBJS)
 # Compile .s files
 $(BUILD_DIR)/asm/%.o: asm/%.s
 	@$(PRINT)$(GREEN)Assembling asm file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
