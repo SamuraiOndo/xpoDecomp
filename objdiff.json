@@ -1,0 +1,36 @@
+{
+  "build_base": true,
+  "build_target": false,
+  "custom_make": "make",
+  "custom_args": [
+    "progress"
+  ],
+  "units": [
+    {
+      "name": "header",
+      "base_path": null,
+      "target_path": "expected/asm/header.s.o",
+      "metadata": {
+        "progress_categories": []
+      }
+    },
+    {
+      "name": "text",
+      "base_path": null,
+      "target_path": "expected/asm/text.s.o",
+      "metadata": {
+        "progress_categories": []
+      }
+    }
+  ],
+  "progress_categories": [
+    {
+      "id": "sdk",
+      "name": "Psy-Q SDK"
+    },
+    {
+      "id": "main",
+      "name": "Main Executable"
+    }
+  ]
+}

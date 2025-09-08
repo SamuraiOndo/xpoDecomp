@@ -51,7 +51,7 @@ LD_MAP       := $(BUILD_DIR)/$(TARGET).map
 
 PYTHON     := python3
 SPLAT_YAML := $(BASEEXE).yaml
-SPLAT      := $(PYTHON) -m splat split $(SPLAT_YAML)
+SPLAT      := splat split $(SPLAT_YAML)
 DIFF       := diff
 MASPSX     := $(PYTHON) tools/maspsx/maspsx.py --use-comm-section --aspsx-version=2.81 -G4096
 CROSS    := mips-linux-gnu-
@@ -99,10 +99,9 @@ endif
 ### Sources ###
 
 ASM_SRCS := $(shell find asm/ -type f -name '*.s')
-ASM_OBJS := $(ASM_SRCS:asm/%.s=$(BUILD_DIR)/asm/%.o)
-
+ASM_OBJS := $(ASM_SRCS:asm/%.s=$(BUILD_DIR)/asm/%.s.o)
 C_SRCS := $(shell find src/ -name '*.c')
-C_OBJS := $(C_SRCS:%.c=$(BUILD_DIR)/%.o)
+C_OBJS := $(C_SRCS:%.c=$(BUILD_DIR)/%.c.o)
 
 # Object files
 OBJECTS := $(shell grep -E 'BUILD_PATH.+\.o' $(LD_SCRIPT) -o)
@@ -184,6 +183,7 @@ objdiff-config: regenerate
 	@$(PYTHON) $(OBJDIFF_DIR)/objdiff_generate.py $(OBJDIFF_DIR)/config.yaml
 
 report: objdiff-config
+	@$(MAKE) NON_MATCHING=1 SKIP_ASM=1 expected -j12
 	@$(OBJDIFF) report generate > $(BUILD_DIR)/progress.json
 
 progress:
@@ -191,23 +191,27 @@ progress:
 
 expected: all
 	@mkdir -p $(EXPECTED_DIR)
-	$(V)mv $(BUILD_DIR)/asm $(EXPECTED_DIR)/asm
-	$(V)mv $(BUILD_DIR)/src $(EXPECTED_DIR)/src
+	@mkdir -p $(EXPECTED_DIR)/asm
+	@mkdir -p $(EXPECTED_DIR)/src
+	$(V)rsync -a --delete $(BUILD_DIR)/asm/ $(EXPECTED_DIR)/asm/
+	@[ -d $(BUILD_DIR)/src ] && rsync -a --delete $(BUILD_DIR)/src/ $(EXPECTED_DIR)/src/ || echo "No src directory to move"
 	$(V)find $(EXPECTED_DIR)/src -name '*.s.o' -delete
 
+
 # Compile .c files
-$(BUILD_DIR)/%.o: %.c
+$(BUILD_DIR)/src/%.c.o: src/%.c
+	@mkdir -p $(dir $@)
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
-	@mkdir -p $(shell dirname $@)
 ifeq ($(CHECK),1)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CHECK_WARNINGS) $(CPPFLAGS) -UTARGET_PSX $<
 endif
 	$(V)$(CPP) $(CPPFLAGS) -ffreestanding -MMD -MP -MT $@ -MF $@.d $< | $(CC) $(CFLAGS) | $(MASPSX) | $(AS) $(ASFLAGS) -o $@
 OBJECTS += $(C_OBJS)
+
 # Compile .s files
-$(BUILD_DIR)/asm/%.o: asm/%.s
+$(BUILD_DIR)/asm/%.s.o: asm/%.s
+	@mkdir -p $(dir $@)
 	@$(PRINT)$(GREEN)Assembling asm file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
-	@mkdir -p $(shell dirname $@)
 	$(V)$(AS) $(ASFLAGS) -o $@ $<
 OBJECTS += $(ASM_OBJS)
 
@@ -218,11 +222,11 @@ $(BUILD_DIR)/%.bin.o: %.bin
 	$(V)$(LD) -r -b binary -o $@ $<
 
 $(BUILD_DIR)/$(LD_SCRIPT): $(LD_SCRIPT)
-	@mkdir -p $(BUILD_DIR)
 	@$(PRINT)$(GREEN)Preprocessing linker script: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(BUILD_DIR)
 	$(V)$(CPP) -P -DBUILD_PATH=$(BUILD_DIR) $< -o $@
-#Temporary hack for noload segment wrong alignment
 	@sed -r -i 's/\.main_bss \(NOLOAD\) : SUBALIGN\(4\)/.main_bss main_SDATA_END (NOLOAD) : SUBALIGN(4)/g' $@
+
 
 ifeq ($(SKIP_ASM),1)
 # Prevent building ELF if SKIP_ASM != 1

@@ -2,17 +2,17 @@ categories:
   - id: sdk
     name: Psy-Q SDK
     paths:
-      - scus_942.36/psyq
+      - psyq
   - id: main
     name: Main Executable
     paths:
-      - scus_942.36
+      - game
 
 expected_paths:
   asm: expected/asm
   src: expected/src
 
 ignored_files:
-  - scus_942.36/header
+  - psx.exe/header
 
 output: ./objdiff.json

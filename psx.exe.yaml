@@ -14,7 +14,6 @@ options:
   find_file_boundaries: False
   gp_value: 0x800963A8
 
-  o_as_suffix: True
 
   section_order: [".rodata", ".text", ".data", ".sdata", ".sbss", ".bss"]
 
@@ -40,7 +39,7 @@ segments:
     subsegments:
       - [0x800, rodata, rdata]
       - [0x20E0, c, game/test]
-      - [0x20E8, asm, text]
+      - [0x2130, asm, text]
       - [0x5B5EC, data, data]
       - [0x7EBA8, sdata, sdata]
       - { vram: 0x80096690, type: sbss, name: sbss }
